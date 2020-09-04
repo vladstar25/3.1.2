@@ -6,6 +6,7 @@ import com.my.pr.service.RoleService;
 import com.my.pr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,8 @@ public class AdminController {
 
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('ADMIN,USER')")
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String listUsers(Model model) {
+    public String listUsers(@AuthenticationPrincipal User userLogin, Model model) {
+        model.addAttribute("userLogin",userLogin);
         model.addAttribute("user", new User());
         model.addAttribute("listUser", this.userService.allUsers());
         return "users";

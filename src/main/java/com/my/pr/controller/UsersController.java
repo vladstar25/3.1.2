@@ -21,8 +21,8 @@ public class UsersController {
 
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('ADMIN,USER') or hasAuthority('USER')")
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String userPage(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("user", user);
+    public String userPage(@AuthenticationPrincipal User userLogin, Model model) {
+        model.addAttribute("userLogin", userLogin);
         return "user";
     }
 }
