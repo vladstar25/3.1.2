@@ -26,7 +26,6 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String loginPage() {
         return "login";
