@@ -24,38 +24,36 @@ public class RestAdminController {
         this.roleService = roleService;
     }
 
-//    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('ADMIN,USER')")
-//    @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-//    public String addUser(@ModelAttribute("user") User user, @RequestParam("role") String[] role) {
-//        Set<Role> roles = new HashSet<>();
-//
-//        for(String str: role){
-//            roles.add(roleService.getRoleByName(str));
-//        }
-//        user.setRoles(roles);
-//        userService.add(user);
-//        return "redirect:/admin";
-//    }
-//
-//    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('ADMIN,USER')")
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable("role") String[] role) {
-//        Set<Role> roles = new HashSet<>();
-//        for(String str: role){
-//            roles.add(roleService.getRoleByName(str));
-//        }
-//        user.setRoles(roles);
-//        final boolean updated = userService.edit(user);
-//        return updated
-//                ? new ResponseEntity<>(HttpStatus.OK)
-//                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-//    }
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('ADMIN,USER')")
+    @PostMapping(value = "/user/add")
+    public ResponseEntity<?> addUser(@ModelAttribute("user") User user, @RequestParam("role") String[] role) {
+        System.out.println("User Add Button ACTIVATE!!!");
+        Set<Role> roles = new HashSet<>();
+        for(String str: role){
+            roles.add(roleService.getRoleByName(str));
+        }
+        user.setRoles(roles);
+        userService.add(user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('ADMIN,USER')")
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateUser(@ModelAttribute("user") User user, @PathVariable("role") String[] role, @PathVariable("id") int id) {
+        Set<Role> roles = new HashSet<>();
+        for(String str: role){
+            roles.add(roleService.getRoleByName(str));
+        }
+        user.setRoles(roles);
+        userService.edit(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     //OK
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('ADMIN,USER')")
-    @GetMapping("/remote/{id}")
+    @DeleteMapping("/remote/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
-        System.out.println("OPS");
         User user = userService.getById(id);
         this.userService.delete(user);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -23,7 +23,7 @@
                     </button>
                 </div>
                 <div class="modal-body text-center">
-                    <form action="#" th:action="@{/update/{id}(id=${user.id})}" th:object="${user}" method="post">
+                    <form class="editUser" action="#" th:action="@{/update/{id}(id=${user.id})}" th:object="${user}" method="post">
                         <h5 class="text-center">ID</h5>
                         <input type="text" th:value="${user.getId()}" name="id" placeholder="Name" readonly>
                         <h5 class="text-center">Name</h5>
@@ -101,14 +101,14 @@
                         <td th:text="${msg.getAge()}">Age</td>
                         <td th:text="${msg.getRoles()}">Role</td>
                         <td>
-                            <button th:id="'ed' + ${msg.getId()}" type="button" class="btn btn-info" data-toggle="modal"
+                            <button th:id="${msg.getId()}" type="button" class="btn btn-info editUser" data-toggle="modal"
                                     th:data-target="'#editModal'+${msg.getId()}">
                                 Edit
                             </button>
                         </td>
                         <td>
                             <!--<a class="btn btn-danger delete" th:href="@{/remote/{id}(id=${msg.getId()})}">Delete</a> -->
-                            <button class="btn btn-danger" onclick="deleteUser()">Delete</button>
+                            <button class="btn btn-danger deleteButton">Delete</button>
                         </td>
                     </tr>
                     </tbody>
@@ -117,7 +117,7 @@
             <div class="tab-pane fade" id="nav-newuser" role="tabpanel" aria-labelledby="nav-newuser-tab">
                 <h4>Add New User:</h4>
                 <div class="row justify-content-center">
-                    <form action="#" th:action="@{/user/add}" th:object="${user}" method="post">
+                    <form id="addUser" action="#" th:object="${user}" method="post">
                         <table class="tab">
                             <tr>
                                 <td>Name</td>
@@ -176,13 +176,12 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 <script type="application/javascript">
-    function deleteUser() {
-        if (confirm('Do you really want to delete  User with id ?')) {
+    $(document).ready(function () {
+        $(document).delegate(".deleteButton", "click", function () {
             let id = $(this).parent().parent().attr("id");
-            //let parent = $(this).parent().parent();
             $.ajax({
-                method: "GET",
-                url: "/remote/"+id,
+                method: "DELETE",
+                url: "/remote/" + id,
                 cache: false,
                 success: function () {
                     console.log("Все ок!");
@@ -192,8 +191,30 @@
                     console.log("Что тр пошло не так!!!");
                 }
             });
-        }
-    };
+        });
+        $('#addUser').submit(function () {
+            $.post(
+                '/user/add',                                    // адрес обработчика
+                $("#addUser").serialize(),              // отправляемые данные
+                function (msg) {                        // получен ответ сервера
+                    document.location.href = "/admin";
+                    alert(msg);
+                }
+            );
+            return false;
+        });
+        $('.editUser').submit(function () {
+            $.post(
+                '/update/31',                                    // адрес обработчика
+                $(this).serialize(),              // отправляемые данные
+                function (msg) {                        // получен ответ сервера
+                    document.location.href = "/admin";
+                    alert(msg);
+                }
+            );
+            return false;
+        });
+    });
 </script>
 </body>
 </html>
